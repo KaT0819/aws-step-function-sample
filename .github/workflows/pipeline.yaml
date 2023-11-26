@@ -5,9 +5,13 @@ on:
     branches:
       - 'main'
       - 'feature**'
+    paths:
+      - sam-step-function-sample/**
   delete:
     branches:
       - 'feature**'
+    paths:
+      - sam-step-function-sample/**
 
 env:
   SAM_TEMPLATE: template.yaml
