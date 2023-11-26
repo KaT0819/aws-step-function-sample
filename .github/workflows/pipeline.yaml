@@ -12,6 +12,7 @@ on:
       - 'feature**'
     paths:
       - sam-step-function-sample/**
+  workflow_dispatch:
 
 env:
   SAM_TEMPLATE: template.yaml
