@@ -5,8 +5,8 @@ on:
     branches:
       - 'main'
       - 'feature**'
-    paths:
-      - sam-step-function-sample/**
+    # paths:
+    #   - sam-step-function-sample/**
   delete:
     branches:
       - 'feature**'
