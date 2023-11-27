@@ -137,6 +137,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
+          name: packaged-testing.yaml
           path: ~/packaged-testing.yaml
 
       - name: Upload artifacts to testing artifact buckets
@@ -164,6 +165,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
+          name: packaged-prod.yaml
           path: ~/packaged-prod.yaml
 
   deploy-testing:
@@ -190,7 +192,6 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: packaged-testing.yaml
           path: ~/packaged-testing.yaml
       - name: Display files
         run: ls -R ~/
@@ -231,7 +232,6 @@ jobs:
           use-installer: true
       - uses: actions/download-artifact@v3
         with:
-          name: packaged-prod.yaml
           path: ~/packaged-prod.yaml
 
       - name: Assume the prod pipeline user role
