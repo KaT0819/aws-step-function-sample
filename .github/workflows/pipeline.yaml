@@ -137,7 +137,6 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: packaged-testing.yaml
           path: ~/packaged-testing.yaml
 
       - name: Upload artifacts to testing artifact buckets
@@ -165,7 +164,6 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: packaged-prod.yaml
           path: ~/packaged-prod.yaml
 
   deploy-testing:
