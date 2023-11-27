@@ -195,11 +195,13 @@ jobs:
           path: ~/packaged-testing.yaml
       - name: Display files
         run: ls -l ~/
+      - name: Display files
+        run: ls -l ~/packaged-testing.yaml
 
       - name: Deploy to testing account
         run: |
           sam deploy --stack-name ${TESTING_STACK_NAME} \
-            --template-file ~/packaged-testing.yaml \
+            --template-file ~/packaged-testing.yaml/packaged-testing.yaml \
             --capabilities CAPABILITY_IAM \
             --region ${TESTING_REGION} \
             --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
@@ -233,6 +235,10 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           path: ~/packaged-prod.yaml
+      - name: Display files
+        run: ls -l ~/
+      - name: Display files
+        run: ls -l ~/packaged-prod.yaml
 
       - name: Assume the prod pipeline user role
         uses: aws-actions/configure-aws-credentials@v4
