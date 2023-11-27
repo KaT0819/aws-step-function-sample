@@ -141,7 +141,8 @@ jobs:
             --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
             --region ${TESTING_REGION} \
             --output-template-file packaged-testing.yaml
-
+      - name: Display files
+        run: ls -R
       - uses: actions/upload-artifact@v3
         with:
           name: packaged-testing.yaml
