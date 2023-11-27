@@ -4,14 +4,10 @@ on:
   push:
     branches:
       - 'main'
-      - 'feature**'
-    paths:
-      - sam-step-function-sample/**
+      - 'develop'
   delete:
     branches:
-      - 'feature**'
-    paths:
-      - sam-step-function-sample/**
+      - 'develop'
   workflow_dispatch:
 
 env:
