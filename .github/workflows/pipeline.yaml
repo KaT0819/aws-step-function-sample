@@ -135,18 +135,17 @@ jobs:
           role-duration-seconds: 3600
           role-skip-session-tagging: true
 
+      - uses: actions/upload-artifact@v3
+        with:
+          name: packaged-testing.yaml
+          path: ~/packaged-testing.yaml
+
       - name: Upload artifacts to testing artifact buckets
         run: |
           sam package \
             --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
             --region ${TESTING_REGION} \
             --output-template-file ~/packaged-testing.yaml
-      - name: Display files
-        run: ls -R ~/
-      - uses: actions/upload-artifact@v3
-        with:
-          name: packaged-testing.yaml
-          path: ~/packaged-testing.yaml
 
       - name: Assume the prod pipeline user role
         uses: aws-actions/configure-aws-credentials@v4
@@ -194,11 +193,14 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: packaged-testing.yaml
+          path: ~/packaged-testing.yaml
+      - name: Display files
+        run: ls -R ~/
 
       - name: Deploy to testing account
         run: |
           sam deploy --stack-name ${TESTING_STACK_NAME} \
-            --template-file packaged-testing.yaml \
+            --template-file ~/packaged-testing.yaml \
             --capabilities CAPABILITY_IAM \
             --region ${TESTING_REGION} \
             --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
@@ -232,6 +234,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: packaged-prod.yaml
+          path: ~/packaged-prod.yaml
 
       - name: Assume the prod pipeline user role
         uses: aws-actions/configure-aws-credentials@v4
@@ -245,7 +248,7 @@ jobs:
       - name: Deploy to production account
         run: |
           sam deploy --stack-name ${PROD_STACK_NAME} \
-            --template-file packaged-prod.yaml \
+            --template-file ~/packaged-prod.yaml \
             --capabilities CAPABILITY_IAM \
             --region ${PROD_REGION} \
             --s3-bucket ${PROD_ARTIFACTS_BUCKET} \
