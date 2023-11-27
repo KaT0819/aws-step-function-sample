@@ -190,9 +190,9 @@ jobs:
           role-duration-seconds: 3600
           role-skip-session-tagging: true
 
-      - uses: actions/download-artifact@v3
-        with:
-          name: packaged-testing.yaml
+      #   - uses: actions/download-artifact@v3
+      #     with:
+      #       name: packaged-testing.yaml
 
       - name: Deploy to testing account
         run: |
@@ -228,9 +228,9 @@ jobs:
       - uses: aws-actions/setup-sam@v2
         with:
           use-installer: true
-      - uses: actions/download-artifact@v3
-        with:
-          name: packaged-prod.yaml
+      #   - uses: actions/download-artifact@v3
+      #     with:
+      #       name: packaged-prod.yaml
 
       - name: Assume the prod pipeline user role
         uses: aws-actions/configure-aws-credentials@v4
