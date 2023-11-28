@@ -144,7 +144,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: packaged-testing.yaml
-          path: ./sam-step-function-samplepackaged-testing.yaml
+          path: ./sam-step-function-sample/packaged-testing.yaml
 
       - name: Assume the prod pipeline user role
         uses: aws-actions/configure-aws-credentials@v4
