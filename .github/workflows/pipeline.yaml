@@ -122,6 +122,7 @@ jobs:
 
       - name: Build resources
         run: sam build --template ${SAM_TEMPLATE}
+        working-directory: ./sam-step-function-sample
 
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@v4
