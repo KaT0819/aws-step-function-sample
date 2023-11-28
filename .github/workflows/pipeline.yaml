@@ -171,9 +171,6 @@ jobs:
   deploy-testing:
     if: github.ref == 'refs/heads/main'
     needs: [build-and-package]
-    defaults:
-      run:
-        working-directory: ./sam-step-function-sample
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -192,21 +189,22 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          path: ~/packaged-testing.yaml
+          path: ./sam-step-function-sample/packaged-testing.yaml
       - name: Display files
-        run: ls -l ~/
+        run: ls -l ./sam-step-function-sample
       - name: Display files
-        run: ls -l ~/packaged-testing.yaml
+        run: ls -l ./sam-step-function-sample/packaged-testing.yaml
 
       - name: Deploy to testing account
         run: |
           sam deploy --stack-name ${TESTING_STACK_NAME} \
-            --template-file ~/packaged-testing.yaml/packaged-testing.yaml \
+            --template-file packaged-testing.yaml \
             --capabilities CAPABILITY_IAM \
             --region ${TESTING_REGION} \
             --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --role-arn ${TESTING_CLOUDFORMATION_EXECUTION_ROLE}
+        working-directory: ./sam-step-function-sample
 
   integration-test:
     if: github.ref == 'refs/heads/main'
@@ -220,9 +218,6 @@ jobs:
   deploy-prod:
     if: github.ref == 'refs/heads/main'
     needs: [integration-test]
-    defaults:
-      run:
-        working-directory: ./sam-step-function-sample
     runs-on: ubuntu-latest
     # Configure GitHub Action Environment to have a manual approval step before deployment to production
     # https://docs.github.com/en/actions/reference/environments
@@ -234,11 +229,11 @@ jobs:
           use-installer: true
       - uses: actions/download-artifact@v3
         with:
-          path: ~/packaged-prod.yaml
+          path: ./sam-step-function-sample/packaged-prod.yaml
       - name: Display files
-        run: ls -l ~/
+        run: ls -l ./sam-step-function-sample
       - name: Display files
-        run: ls -l ~/packaged-prod.yaml
+        run: ls -l ./sam-step-function-sample/packaged-prod.yaml
 
       - name: Assume the prod pipeline user role
         uses: aws-actions/configure-aws-credentials@v4
@@ -252,9 +247,10 @@ jobs:
       - name: Deploy to production account
         run: |
           sam deploy --stack-name ${PROD_STACK_NAME} \
-            --template-file ~/packaged-prod.yaml \
+            --template-file packaged-prod.yaml \
             --capabilities CAPABILITY_IAM \
             --region ${PROD_REGION} \
             --s3-bucket ${PROD_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --role-arn ${PROD_CLOUDFORMATION_EXECUTION_ROLE}
+        working-directory: ./sam-step-function-sample
