@@ -113,9 +113,6 @@ jobs:
   build-and-package:
     if: github.ref == 'refs/heads/main'
     needs: [test]
-    defaults:
-      run:
-        working-directory: ./sam-step-function-sample
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -140,12 +137,14 @@ jobs:
           sam package \
             --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
             --region ${TESTING_REGION} \
-            --output-template-file ~/packaged-testing.yaml
+            --output-template-file packaged-testing.yaml
+        working-directory: ./sam-step-function-sample
 
       - uses: actions/upload-artifact@v3
         with:
           name: packaged-testing.yaml
-          path: ~/packaged-testing.yaml
+          path: packaged-testing.yaml
+          working-directory: ./sam-step-function-sample
 
       - name: Assume the prod pipeline user role
         uses: aws-actions/configure-aws-credentials@v4
@@ -161,12 +160,14 @@ jobs:
           sam package \
             --s3-bucket ${PROD_ARTIFACTS_BUCKET} \
             --region ${PROD_REGION} \
-            --output-template-file ~/packaged-prod.yaml
+            --output-template-file packaged-prod.yaml
+        working-directory: ./sam-step-function-sample
 
       - uses: actions/upload-artifact@v3
         with:
           name: packaged-prod.yaml
           path: ~/packaged-prod.yaml
+          working-directory: ./sam-step-function-sample
 
   deploy-testing:
     if: github.ref == 'refs/heads/main'
