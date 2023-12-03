@@ -169,10 +169,6 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: packaged-testing.yaml
-      - name: Display files
-        run: ls -l ./
-      - name: Display files
-        run: ls -l packaged-testing.yaml
 
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@v4
@@ -214,7 +210,7 @@ jobs:
           use-installer: true
       - uses: actions/download-artifact@v3
         with:
-          path: packaged-prod.yaml
+          name: packaged-prod.yaml
       - name: Display files
         run: ls -l ./
       - name: Display files
