@@ -5,6 +5,7 @@ on:
     branches:
       - 'main'
       - 'develop'
+      - 'feature*'
   delete:
     branches:
       - 'develop'
@@ -45,9 +46,6 @@ jobs:
 
   delete-feature:
     if: startsWith(github.event.ref, 'feature') && github.event_name == 'delete'
-    defaults:
-      run:
-        working-directory: ./sam-step-function-sample
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -80,9 +78,6 @@ jobs:
     # https://github.com/aws-actions/configure-aws-credentials#notice-node12-deprecation-warning
     if: github.ref == 'refs/heads/develop'
     needs: [test]
-    defaults:
-      run:
-        working-directory: ./sam-step-function-sample
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -122,7 +117,6 @@ jobs:
 
       - name: Build resources
         run: sam build --template ${SAM_TEMPLATE}
-        working-directory: ./sam-step-function-sample
 
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@v4
@@ -139,12 +133,11 @@ jobs:
             --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
             --region ${TESTING_REGION} \
             --output-template-file packaged-testing.yaml
-        working-directory: ./sam-step-function-sample
 
       - uses: actions/upload-artifact@v3
         with:
           name: packaged-testing.yaml
-          path: ./sam-step-function-sample/packaged-testing.yaml
+          path: packaged-testing.yaml
 
       - name: Assume the prod pipeline user role
         uses: aws-actions/configure-aws-credentials@v4
@@ -161,12 +154,11 @@ jobs:
             --s3-bucket ${PROD_ARTIFACTS_BUCKET} \
             --region ${PROD_REGION} \
             --output-template-file packaged-prod.yaml
-        working-directory: ./sam-step-function-sample
 
       - uses: actions/upload-artifact@v3
         with:
           name: packaged-prod.yaml
-          path: ./sam-step-function-sample/packaged-prod.yaml
+          path: packaged-prod.yaml
 
   deploy-testing:
     if: github.ref == 'refs/heads/main'
@@ -189,11 +181,11 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          path: ./sam-step-function-sample/packaged-testing.yaml
+          path: packaged-testing.yaml
       - name: Display files
-        run: ls -l ./sam-step-function-sample
+        run: ls -l ./
       - name: Display files
-        run: ls -l ./sam-step-function-sample/packaged-testing.yaml
+        run: ls -l packaged-testing.yaml
 
       - name: Deploy to testing account
         run: |
@@ -204,7 +196,6 @@ jobs:
             --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --role-arn ${TESTING_CLOUDFORMATION_EXECUTION_ROLE}
-        working-directory: ./sam-step-function-sample
 
   integration-test:
     if: github.ref == 'refs/heads/main'
@@ -229,11 +220,11 @@ jobs:
           use-installer: true
       - uses: actions/download-artifact@v3
         with:
-          path: ./sam-step-function-sample/packaged-prod.yaml
+          path: packaged-prod.yaml
       - name: Display files
-        run: ls -l ./sam-step-function-sample
+        run: ls -l ./
       - name: Display files
-        run: ls -l ./sam-step-function-sample/packaged-prod.yaml
+        run: ls -l packaged-prod.yaml
 
       - name: Assume the prod pipeline user role
         uses: aws-actions/configure-aws-credentials@v4
@@ -253,4 +244,3 @@ jobs:
             --s3-bucket ${PROD_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --role-arn ${PROD_CLOUDFORMATION_EXECUTION_ROLE}
-        working-directory: ./sam-step-function-sample
